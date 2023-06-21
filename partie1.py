@@ -1,61 +1,65 @@
 import sqlite3
 
+# PARTIE 1 :
+
 def main():
     try:
         # connexion a la BDD (création si elle n'existe pas)
-        connexion = sqlite3.connect("alesc.sqlite")
+        connexion = sqlite3.connect("alesc.db")
         curseur = connexion.cursor()
 
         # script de creation de la table logement
-        requete_logements = f'''CREATE TABLE IF NOT EXISTS `logements` (
-              `id_logement` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        requete_type = f'''CREATE TABLE IF NOT EXISTS `type` (
+                      `id_type` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                      'nom' TEXT NOT NULL)'''
+
+        requete_logeur = f'''CREATE TABLE IF NOT EXISTS `logeur` (
+              `id_logeur` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+              'nom' TEXT NOT NULL,
+              `prenom` TEXT NOT NULL,
               `numero_rue` TEXT  NOT NULL,
-              `label` INTEGER  NULL,
               `nom_rue` TEXT  NOT NULL,
               `code_postal` TEXT  NOT NULL,
-              `ville` TEXT  NOT NULL,
-              `type` TEXT  NOT NULL,
-              `id_logeur` INTEGER NOT NULL, 
-              CONSTRAINT `fk_logements_logeurs`
-                FOREIGN KEY (`id_logeur`)  
-                REFERENCES `logeurs` (`id_logeur`)
-                ON DELETE NO ACTION
-                ON UPDATE NO ACTION)'''
+              `ville` TEXT  NOT NULL)'''
 
-        curseur.execute(requete_logements)  # execution de la requete
-
-
-        # script de creation de la table logement
-        requete_logeurs = f'''CREATE TABLE IF NOT EXISTS `logeurs` (
-                     `id_logeur` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                     `nom` TEXT  NOT NULL,
-                     `prenom` TEXT  NOT NULL,
-                     `numero_rue` TEXT  NULL,
-                     `nom_rue` TEXT  NULL,
-                     `code_postal` TEXT  NULL,
-                     `ville` TEXT  NULL)'''
-
-        curseur.execute(requete_logeurs)  # execution de la requete
-
-        # script de creation de la table logement
-        requete_etudiants = f'''CREATE TABLE IF NOT EXISTS `etudiants` (
-                      `id_etudiant` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                      `nom` TEXT  NOT NULL,
-                      `prenom` TEXT  NOT NULL,
-                      `semestre` INTEGER  NULL,
-                      `numero_rue` TEXT  NULL,
-                      `nom_rue` TEXT  NULL,
-                      `code_postal` TEXT  NULL,
-                      `ville` TEXT  NULL,
-                      `id_logement` INTEGER NULL,
-                      CONSTRAINT `fk_etudiants_logements`
-                        FOREIGN KEY (`id_logements`)  
-                        REFERENCES `logements` (`id_logement`)
+        requete_logement = f'''CREATE TABLE IF NOT EXISTS `logement` (
+                      `id_logement` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                      `numero_rue` TEXT  NOT NULL,
+                      `nom_rue` TEXT  NOT NULL,
+                      `code_postal` TEXT  NOT NULL,
+                      `ville` TEXT  NOT NULL,
+                      `label` INTEGER  NOT NULL,
+                      `id_logeur` INTEGER NOT NULL,
+                      'id_type' INTEGER NOT NULL,
+                      CONSTRAINT `fk_logement_logeur`
+                        FOREIGN KEY (`id_logeur`)  
+                        REFERENCES `logeur` (`id_logeur`)
+                        ON DELETE NO ACTION
+                        ON UPDATE NO ACTION,
+                      CONSTRAINT 'fk_logement_type'
+                        FOREIGN KEY ('id_type')
+                        REFERENCES 'type' ('id_type')
                         ON DELETE NO ACTION
                         ON UPDATE NO ACTION)'''
 
+        requete_etudiant = f'''CREATE TABLE IF NOT EXISTS `etudiant` (
+              `id_etudiant` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+              `nom` TEXT  NOT NULL,
+              `prenom` INTEGER  NOT NULL,
+              `semestre` TEXT  NOT NULL,
+              `id_logement` INTEGER NOT NULL,
+              CONSTRAINT `fk_etudiant_logement`
+                FOREIGN KEY (`id_logement`)  
+                REFERENCES `logement` (`id_logement`)
+                ON DELETE NO ACTION
+                ON UPDATE NO ACTION)'''
 
-        curseur.execute(requete_logeurs)  # execution de la requete
+        curseur.execute(requete_type)
+        curseur.execute(requete_logeur)
+        curseur.execute(requete_logement)  # execution de la requete
+        curseur.execute(requete_etudiant)
+
+        # CREATION DES AUTRES TABLES A FAIRE
 
         connexion.commit()
 
@@ -67,7 +71,5 @@ def main():
             connexion.close()
 
 
-
 if __name__ == '__main__':
     main()
-
