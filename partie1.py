@@ -8,10 +8,13 @@ def main():
         connexion = sqlite3.connect("alesc.db")
         curseur = connexion.cursor()
 
-        # script de creation de la table logement
+        # script de creation de la table type (pour le type de logement)
+        
         requete_type = f'''CREATE TABLE IF NOT EXISTS `type` (
                       `id_type` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                       'nom' TEXT NOT NULL)'''
+
+        # script de creation de la table logeur
 
         requete_logeur = f'''CREATE TABLE IF NOT EXISTS `logeur` (
               `id_logeur` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -21,6 +24,8 @@ def main():
               `nom_rue` TEXT  NOT NULL,
               `code_postal` TEXT  NOT NULL,
               `ville` TEXT  NOT NULL)'''
+        
+        # script de creation de la table logement
 
         requete_logement = f'''CREATE TABLE IF NOT EXISTS `logement` (
                       `id_logement` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -41,6 +46,8 @@ def main():
                         REFERENCES 'type' ('id_type')
                         ON DELETE NO ACTION
                         ON UPDATE NO ACTION)'''
+        
+        # script de creation de la table etudiant
 
         requete_etudiant = f'''CREATE TABLE IF NOT EXISTS `etudiant` (
               `id_etudiant` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -54,12 +61,12 @@ def main():
                 ON DELETE NO ACTION
                 ON UPDATE NO ACTION)'''
 
-        curseur.execute(requete_type)
-        curseur.execute(requete_logeur)
-        curseur.execute(requete_logement)  # execution de la requete
-        curseur.execute(requete_etudiant)
+        # execution des requetes 
 
-        # CREATION DES AUTRES TABLES A FAIRE
+        curseur.execute(requete_type) 
+        curseur.execute(requete_logeur)
+        curseur.execute(requete_logement)  
+        curseur.execute(requete_etudiant)
 
         connexion.commit()
 
